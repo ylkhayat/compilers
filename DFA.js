@@ -1,10 +1,10 @@
-function Transition(init, input0, input1) {
-  this.init = init;
-  this.input0 = input0;
-  this.input1 = input1;
+function Transition({ in, out0, out1}) {
+  this.in = in;
+  this.out0 = out0;
+  this.out1 = out1;
   Transition.prototype.get = function() {
     return {
-      [this.init]: { "0": this.input0, "1": this.input1 }
+      [this.in]: { "0": this.out0, "1": this.out1, 'e':this.oute }
     };
   };
 }
@@ -19,7 +19,7 @@ function DFA(dfaDesc = "#") {
     const [init, on0, on1] = transition.split(",");
     this.transitionFunctions = {
       ...this.transitionFunctions,
-      ...new Transition(init, on0, on1).get()
+      ...new Transition({in, out0, out1}).get()
     };
     this.states = [...this.states, init, on0, on1];
   });
@@ -46,7 +46,33 @@ function DFA(dfaDesc = "#") {
   };
 }
 
+function NFA(nfaDesc = "#") {
+  const [
+    zeroTransitionString = "",
+    oneTransitionString = "",
+    epsTransitionString = "",
+    acceptString = ""
+  ] = nfaDesc.split("#");
+    const zeroTransitionFns = zeroTransitionString.split(";");
+    const oneTransitionFns = oneTransitionString.split(";");
+    const epsTransitionFns = epsTransitionString.split(";");
+    this.acceptStates = acceptString.split(",");
+  this.transitionFunctions = {};
+  this.states = [];
+  zeroTransitionFns.forEach(zeroTransition => {
+    const [in, out ] = transition.split(",");
+    this.transitionEntities = {
+      ...this.transitionFunctions,
+      [in]: new Transition({in, out0:out})
+    };
+    this.states = [...this.states, in, out0, out1];
+  });
+  oneTransitionFns.forEach((oneTransition) => {
+        const [in, out ] = transition.split(",");
+  });
+
+  this.states = [...new Set(this.states)];
+}
+
 module.exports = { DFA };
 require("make-runnable");
-
-// new DFA(['s0','s1','s2','s3'],,'',,[])
