@@ -1,46 +1,122 @@
 var { Transition } = require('./index.js');
 const chalk = require('chalk');
+const _ = require('lodash');
 
-function commaJoin(input) {
-  return (Array.isArray(input) ? [input] : input).join(',');
-}
-function computeEpsClosureTransition(transition, nfa) {
-  const usedKeys = [];
-  console.log('ANA HENA', transition);
-  const oute = transition.getEps();
-  const inp = [];
-  epsClosureInp = reccEpsClosure(oute, inp, usedKeys, nfa);
-  epsClosure0 = [];
-  epsClosure1 = [];
-  epsClosureInp.forEach(inp => {
-    zeroes = nfa.transitionEntities[inp].getZero();
-    ones = nfa.transitionEntities[inp].getOne();
-    epsClosure0 = [...epsClosure0, ...(Array.isArray(zeroes) ? zeroes : [zeroes])];
-    epsClosure1 = [...epsClosure1, ...(Array.isArray(ones) ? ones : [ones])];
-  });
-  return new Transition({
-    inp: commaJoin(epsClosureInp),
-    out0: commaJoin(epsClosure0),
-    out1: commaJoin(epsClosure1),
-    oute: [commaJoin(epsClosureInp)],
-  });
+function joinSet(input) {
+  let newState = '';
+  if (input instanceof Set || input instanceof Array) {
+    return [...input].join(',');
+  } else {
+    newState = input;
+  }
+  return newState;
 }
 
-function reccEpsClosure(arr, inp, usedKeys, nfa) {
-  let output = inp;
-  newArr = arr.filter(function(item) {
-    return !usedKeys.includes(item);
-  });
-  if (newArr === []) return inp;
-  newArr.forEach(eps => {
-    if (!usedKeys.includes(eps)) {
-      usedKeys = [...usedKeys, eps];
-      const epsKey = nfa.transitionEntities[eps];
-      const oute = epsKey.getEps();
-      output = [...new Set([...output, eps, ...reccEpsClosure(oute, inp, usedKeys, nfa)])];
+function computeTransition(key, transitions, epsClosures) {
+  if (key instanceof Set) {
+    const oneSet = new Set();
+    const zeroSet = new Set();
+    for (var state of key) {
+      const destTransition = transitions[state];
+      const zeroes = destTransition.getZero();
+      const joinedZeroes = epsClosures[joinSet(zeroes)];
+      if (joinedZeroes) {
+        for (var zero of joinedZeroes) {
+          zeroSet.add(zero);
+        }
+      } else {
+        for (var zero of zeroes) {
+          const array = transitions[zero].getEps();
+          if (array)
+            array.forEach(item => {
+              zeroSet.add(item);
+            });
+          else zeroSet.add(zero);
+        }
+      }
+      const ones = destTransition.getOne();
+      const joinedOnes = epsClosures[joinSet(ones)];
+      if (joinedOnes) {
+        for (var one of joinedOnes) {
+          oneSet.add(one);
+        }
+      } else {
+        for (var one of ones) {
+          const array = transitions[one].getEps();
+          if (array) {
+            array.forEach(item => {
+              oneSet.add(item);
+            });
+          } else oneSet.add(one);
+        }
+      }
     }
-  });
-  return output;
+    return new Transition({ inp: new Set([...key]), out0: zeroSet, out1: oneSet });
+  } else {
+    const destTransition = transitions[key];
+    const zeroes = destTransition.getZero();
+    const ones = destTransition.getOne();
+    const joinedZeroes = epsClosures[joinSet(zeroes)];
+    if (joinedZeroes) {
+      for (var zero of joinedZeroes) {
+        zeroSet.add(zero);
+      }
+    } else {
+      for (var zero of zeroes) {
+        const array = transitions[zero].getEps();
+        if (array && array.length)
+          array.forEach(item => {
+            zeroSet.add(item);
+          });
+        else zeroSet.add(zero);
+      }
+    }
+    const joinedOnes = epsClosures[joinSet(ones)];
+    if (joinedOnes) {
+      for (var one of joinedOnes) {
+        oneSet.add(one);
+      }
+    } else {
+      for (var one of ones) {
+        const array = transitions[one].getEps();
+        if (array && array.length)
+          array.forEach(item => {
+            oneSet.add(item);
+          });
+        else oneSet.add(one);
+      }
+    }
+    if (state === 's1') console.log(state, 'Ones', oneSet);
+  }
+  return new Transition({ inp: new Set([...key]), out0: zeroSet, out1: oneSet });
+  // }
+}
+
+function computeEpsClosure(set, transitions) {
+  if (set instanceof Set) {
+    const computedSet = new Set([...set]);
+    for (var state of set) {
+      const transition = transitions[state];
+      let oute = [];
+      if (transition)
+        oute = transition.getEps().forEach(epsState => {
+          computedSet.add(epsState);
+        });
+    }
+    return computedSet;
+  } else {
+    const arrayParts = set.split(',');
+    const computedSet = new Set(arrayParts);
+    arrayParts.forEach(state => {
+      const transition = transitions[state];
+      let oute = [];
+      if (transition)
+        oute = transition.getEps().forEach(epsState => {
+          computedSet.add(epsState);
+        });
+    });
+    return computedSet;
+  }
 }
 
 function mergeArray(array1, array2) {
@@ -80,11 +156,15 @@ function NFA(nfaDesc = '#') {
       const [inp, out] = zeroTransition.split(',');
       currentTransition = this.transitionEntities[inp];
       if (currentTransition) {
-        currentTransition.add({ out0: out });
+        this.transitionEntities[inp] = currentTransition.add({ out0s: [out] });
       } else {
         this.transitionEntities = {
           ...this.transitionEntities,
-          [inp]: new Transition({ inp, out0: out, oute: inp }),
+          [inp]: new Transition({
+            inp: new Set([inp]),
+            out0: new Set([out]),
+            oute: new Set([inp]),
+          }),
         };
       }
       this.states = [...this.states, inp, out];
@@ -95,11 +175,15 @@ function NFA(nfaDesc = '#') {
       const [inp, out] = oneTransition.split(',');
       currentTransition = this.transitionEntities[inp];
       if (currentTransition) {
-        currentTransition.add({ out1: out });
+        this.transitionEntities[inp] = currentTransition.add({ out1s: [out] });
       } else {
         this.transitionEntities = {
           ...this.transitionEntities,
-          [inp]: new Transition({ inp, out1: out, oute: inp }),
+          [inp]: new Transition({
+            inp: new Set([inp]),
+            out1: new Set([out]),
+            oute: new Set([inp]),
+          }),
         };
       }
       this.states = [...this.states, inp, out];
@@ -110,58 +194,55 @@ function NFA(nfaDesc = '#') {
       const [inp, out] = epsTransition.split(',');
       currentTransition = this.transitionEntities[inp];
       if (currentTransition) {
-        currentTransition.add({ oute: [out, inp] });
+        this.transitionEntities[inp] = currentTransition.add({ outes: [out, inp] });
       } else {
         this.transitionEntities = {
           ...this.transitionEntities,
-          [inp]: new Transition({ inp, oute: [out, inp] }),
+          [inp]: new Transition({ inp: new Set([inp]), oute: new Set([out, inp]) }),
         };
       }
       this.states = [...this.states, inp, out];
     }
   });
+  this.allEpsClosures = {};
+  this.computedAcceptStates = new Set();
+  const initialState = this.transitionEntities['s0'];
+  this.transitionFunctions = { [initialState.getInp()]: initialState.get() };
+  this.nfaTransitionStates = new Set(initialState.getInp());
+  for (var transitionState of this.nfaTransitionStates) {
+    const epsClosures = computeEpsClosure(transitionState, this.transitionEntities);
+    const newStateKey = joinSet([...epsClosures].sort());
+    this.allEpsClosures = {
+      ...this.allEpsClosures,
+      [transitionState]: epsClosures,
+    };
+    for (var epsClosure of epsClosures) {
+      if (this.acceptStates.includes(epsClosure)) {
+        this.computedAcceptStates.add(newStateKey);
+      }
+    }
 
-  // console.log('KOLO', this.transitionEntities);
-  this.nfaTransitions = [this.transitionEntities['s0'].transformMultToSing()];
-  this.nfaTransitionStates = [this.transitionEntities['s0'].transformMultToSing().getStates()];
-
-  for (var i = 0; i < this.nfaTransitions.length; i++) {
-    transitionEntity = this.nfaTransitions[i];
-    // TODO HENA transitionEntity ghalat
-    computedEpsClosureTransitionEntity = computeEpsClosureTransition(transitionEntity, this);
-    isValidTransition = computedEpsClosureTransitionEntity.valid();
-    statesInNfa = this.nfaTransitions.reduce(
-      (accum, nfaTransition) => [...accum, ...nfaTransition.getStates()],
-      []
+    computedStateTransition = this.transitionEntities[newStateKey];
+    const newTranstition = computeTransition(
+      epsClosures,
+      this.transitionEntities,
+      this.allEpsClosures
     );
-    if (isValidTransition) {
-      computeEpsClosureStates = computedEpsClosureTransitionEntity.getStates();
-      filteredEpsClosureRemain = computeEpsClosureStates.filter(state =>
-        statesInNfa.includes(state)
-      );
-      this.nfaTransitionStates = mergeArray(statesInNfa, computeEpsClosureStates);
-      console.log('NFA Transition States', this.nfaTransitionStates);
-      console.log('NFA Transitions', this.nfaTransitions);
-
-      /* NFATransitions keeps track of all Transitions in the NFA */
-      this.nfaTransitions = {
-        ...this.nfaTransitions,
-        computedEpsClosureTransitionEntity,
-      };
-
-      /* TransitionEntities object keyed by the input with values as Transitions */
+    if (!computedStateTransition)
       this.transitionEntities = {
         ...this.transitionEntities,
-        [computedEpsClosureTransitionEntity.getInp()]: computedEpsClosureTransitionEntity,
+        [newStateKey]: newTranstition,
       };
-
-      /* TransitionFunctions actual object to get from the outputs */
-      this.transitionFunctions = {
-        ...this.transitionFunctions,
-        ...computedEpsClosureTransitionEntity.get(),
-      };
+    const newTransitionStates = newTranstition.getStates();
+    for (var state of newTransitionStates) {
+      this.nfaTransitionStates.add(state);
     }
+    this.transitionFunctions = {
+      ...this.transitionFunctions,
+      ...newTranstition.get(),
+    };
   }
+
   this.states = [...new Set(this.states)];
 
   NFA.prototype.evaluate = function(s, input) {
@@ -177,11 +258,25 @@ function NFA(nfaDesc = '#') {
     const symbs = string.split('');
     let lastVisited = 's0';
     symbs.forEach(symb => {
-      lastVisited = this.evaluate(lastVisited, symb) || lastVisited;
+      lastVisited = this.evaluate(lastVisited, symb);
+      if (lastVisited === '') {
+        return {
+          state: lastVisited,
+          pass: this.computedAcceptStates.has(lastVisited),
+        };
+      }
     });
+    let accepted = false;
+    if (lastVisited) {
+      let splitString = lastVisited.split(',');
+      for (var acceptState of this.computedAcceptStates) {
+        let acceptStateArray = acceptState.split(',');
+        accepted |= _.isEqual(splitString.sort(), acceptStateArray.sort());
+      }
+    }
     return {
       state: lastVisited,
-      pass: this.acceptStates.includes(lastVisited),
+      pass: accepted,
     };
   };
 }

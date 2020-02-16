@@ -1,14 +1,30 @@
 var { DFA } = require('./DFA');
 var { NFA } = require('./NFA');
+const _ = require('lodash');
+
+function joinSet(input) {
+  let newState = '';
+  if (input instanceof Set) {
+    return [...input].join(',');
+  } else {
+    newState = input;
+  }
+  return newState;
+}
 
 function Transition({ inp, out0, out1, oute }) {
   this.inp = inp;
-  this.out0 = out0 ? (Array.isArray(out0) ? out0 : [out0]) : [];
-  this.out1 = out1 ? (Array.isArray(out1) ? out1 : [out1]) : [];
-  this.oute = oute ? (Array.isArray(oute) ? oute : [oute]) : [];
+  this.out0 = out0 ? out0 : new Set();
+  this.out1 = out1 ? out1 : new Set();
+  this.oute = oute ? oute : new Set();
+
   Transition.prototype.get = function() {
+    const inpTransition = joinSet(this.inp);
+    const out0Transition = joinSet(this.out0);
+    const out1Transition = joinSet(this.out1);
+
     return {
-      [this.inp]: { '0': this.out0, '1': this.out1, e: this.oute },
+      [inpTransition]: { '0': out0Transition, '1': out1Transition, e: this.oute },
     };
   };
   Transition.prototype.valid = function() {
@@ -27,17 +43,18 @@ function Transition({ inp, out0, out1, oute }) {
     return this.out1;
   };
   Transition.prototype.transformMultToSing = function() {
-    this.inp = Array.isArray(this.inp) ? this.inp.join(',') : this.inp;
-    this.out0 = Array.isArray(this.out0) ? this.out0.join(',') : this.out0;
-    this.out1 = Array.isArray(this.out1) ? this.out1.join(',') : this.out1;
+    this.inp = this.inp;
+    this.out0 = this.out0;
+    this.out1 = this.out1;
     return this;
   };
   Transition.prototype.getStates = function() {
-    return [
-      ...(Array.isArray(this.inp) ? this.inp : [this.inp]),
-      ...(Array.isArray(this.out0) ? this.out0 : [this.out0]),
-      ...(Array.isArray(this.out1) ? this.out1 : [this.out1]),
-    ];
+    const newStates = new Set();
+    if (this.inp.size > 0) newStates.add([...this.inp].join(','));
+    if (this.out0.size > 0) newStates.add([...this.out0].join(','));
+    if (this.out1.size > 0) newStates.add([...this.out1].join(','));
+    if (this.oute.size > 0) newStates.add([...this.oute].join(','));
+    return newStates;
   };
   Transition.prototype.equals = function(transition) {
     return (
@@ -46,13 +63,20 @@ function Transition({ inp, out0, out1, oute }) {
       this.out1 === transition.getOne()
     );
   };
-  Transition.prototype.add = function({ out0, out1, oute }) {
-    if (out0 && !this.out0.includes(out0))
-      this.out0 = [...new Set([...this.out0, ...(Array.isArray(out0) ? out0 : [out0])])];
-    if (out1 && !this.out1.includes(out1))
-      this.out1 = [...new Set([...this.out1, ...(Array.isArray(out1) ? out1 : [out1])])];
-    if (oute && !this.oute.includes(oute))
-      this.oute = [...new Set([...this.oute, ...(Array.isArray(oute) ? oute : [oute])])];
+  Transition.prototype.add = function({ out0s, out1s, outes }) {
+    if (out0s)
+      out0s.forEach(out0 => {
+        this.out0.add(out0);
+      });
+    if (out1s)
+      out1s.forEach(out1 => {
+        this.out1.add(out1);
+      });
+    if (outes)
+      outes.forEach(oute => {
+        this.oute.add(oute);
+      });
+    return this;
   };
 }
 
