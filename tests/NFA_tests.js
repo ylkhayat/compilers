@@ -4,7 +4,7 @@ const chalk = require('chalk');
 
 let tests1 = [
   {
-    dfaString: 's0,s0;s0,s1;s1,s2;s2,s3;s3,s3##s0,s0#s0,s3',
+    dfaString: 's0,s0;s0,s1;s1,s2;s2,s3;s3,s3##s0,s1#s0,s3',
     tests: [
       { input: '10100', output: true },
       { input: '00010', output: false },
