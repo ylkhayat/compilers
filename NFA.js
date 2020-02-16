@@ -1,8 +1,12 @@
 var { Transition } = require('./index.js');
 const chalk = require('chalk');
 
+function commaJoin(input) {
+  return (Array.isArray(input) ? [input] : input).join(',');
+}
 function computeEpsClosureTransition(transition, nfa) {
   const usedKeys = [];
+  console.log('ANA HENA', transition);
   const oute = transition.getEps();
   const inp = [];
   epsClosureInp = reccEpsClosure(oute, inp, usedKeys, nfa);
@@ -15,10 +19,10 @@ function computeEpsClosureTransition(transition, nfa) {
     epsClosure1 = [...epsClosure1, ...(Array.isArray(ones) ? ones : [ones])];
   });
   return new Transition({
-    inp: epsClosureInp.join(','),
-    out0: epsClosure0.join(','),
-    out1: epsClosure1.join(','),
-    oute: [epsClosureInp.join(',')],
+    inp: commaJoin(epsClosureInp),
+    out0: commaJoin(epsClosure0),
+    out1: commaJoin(epsClosure1),
+    oute: [commaJoin(epsClosureInp)],
   });
 }
 
@@ -116,31 +120,42 @@ function NFA(nfaDesc = '#') {
       this.states = [...this.states, inp, out];
     }
   });
+
+  // console.log('KOLO', this.transitionEntities);
   this.nfaTransitions = [this.transitionEntities['s0'].transformMultToSing()];
   this.nfaTransitionStates = [this.transitionEntities['s0'].transformMultToSing().getStates()];
+
   for (var i = 0; i < this.nfaTransitions.length; i++) {
     transitionEntity = this.nfaTransitions[i];
+    // TODO HENA transitionEntity ghalat
     computedEpsClosureTransitionEntity = computeEpsClosureTransition(transitionEntity, this);
     isValidTransition = computedEpsClosureTransitionEntity.valid();
     statesInNfa = this.nfaTransitions.reduce(
       (accum, nfaTransition) => [...accum, ...nfaTransition.getStates()],
       []
     );
-    if (i < 10) console.log('NFA Transitions', this.nfaTransitions, 'States in NFA', statesInNfa);
     if (isValidTransition) {
       computeEpsClosureStates = computedEpsClosureTransitionEntity.getStates();
-      // console.log('New Transition', computedEpsClosureTransitionEntity);
-      // console.log('States in New Transition', computeEpsClosureStates);
-      // console.log('States in NFA', statesInNfa);
       filteredEpsClosureRemain = computeEpsClosureStates.filter(state =>
         statesInNfa.includes(state)
       );
-      this.nfaTransitions = mergeArray(statesInNfa, computeEpsClosureStates);
-      console.log('Merged Arrays', this.nfaTransitions);
+      this.nfaTransitionStates = mergeArray(statesInNfa, computeEpsClosureStates);
+      console.log('NFA Transition States', this.nfaTransitionStates);
+      console.log('NFA Transitions', this.nfaTransitions);
+
+      /* NFATransitions keeps track of all Transitions in the NFA */
+      this.nfaTransitions = {
+        ...this.nfaTransitions,
+        computedEpsClosureTransitionEntity,
+      };
+
+      /* TransitionEntities object keyed by the input with values as Transitions */
       this.transitionEntities = {
         ...this.transitionEntities,
         [computedEpsClosureTransitionEntity.getInp()]: computedEpsClosureTransitionEntity,
       };
+
+      /* TransitionFunctions actual object to get from the outputs */
       this.transitionFunctions = {
         ...this.transitionFunctions,
         ...computedEpsClosureTransitionEntity.get(),

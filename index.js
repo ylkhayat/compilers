@@ -28,8 +28,8 @@ function Transition({ inp, out0, out1, oute }) {
   };
   Transition.prototype.transformMultToSing = function() {
     this.inp = Array.isArray(this.inp) ? this.inp.join(',') : this.inp;
-    this.out0 = this.out0.join(',');
-    this.out1 = this.out1.join(',');
+    this.out0 = Array.isArray(this.out0) ? this.out0.join(',') : this.out0;
+    this.out1 = Array.isArray(this.out1) ? this.out1.join(',') : this.out1;
     return this;
   };
   Transition.prototype.getStates = function() {
