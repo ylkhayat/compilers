@@ -12,11 +12,12 @@ function joinSet(input) {
   return newState;
 }
 
-function Transition({ inp, out0, out1, oute }) {
+function Transition({ inp, out0, out1, oute, outa }) {
   this.inp = inp;
   this.out0 = out0 ? out0 : new Set();
   this.out1 = out1 ? out1 : new Set();
   this.oute = oute ? oute : new Set();
+  this.outa = outa ? outa : new Set();
 
   Transition.prototype.get = function() {
     const inpTransition = joinSet(this.inp);
@@ -24,7 +25,7 @@ function Transition({ inp, out0, out1, oute }) {
     const out1Transition = joinSet(this.out1);
 
     return {
-      [inpTransition]: { '0': out0Transition, '1': out1Transition, e: this.oute },
+      [inpTransition]: { '0': out0Transition, '1': out1Transition, e: this.oute, a: this.outa },
     };
   };
   Transition.prototype.valid = function() {
@@ -41,6 +42,9 @@ function Transition({ inp, out0, out1, oute }) {
   };
   Transition.prototype.getOne = function() {
     return this.out1;
+  };
+  Transition.prototype.getAction = function() {
+    return this.outa;
   };
   Transition.prototype.transformMultToSing = function() {
     this.inp = this.inp;

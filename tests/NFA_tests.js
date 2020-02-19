@@ -23,18 +23,18 @@ let tests1 = [
       { input: '10101', output: false },
     ],
   },
-  {
-    nfaString: 's0,s0;s1,s2;s3,s3#s0,s0;s0,s1;s2,s3;s3,s3#s1,s2#s3',
-    tests: [
-      { input: '11', output: true },
-      { input: '1011', output: true },
-      { input: '1111', output: true },
-      { input: '1110', output: true },
-      { input: '001', output: false },
-      { input: '10', output: false },
-      { input: '000', output: false },
-    ],
-  },
+  // {
+  //   nfaString: 's0,s0;s1,s2;s3,s3#s0,s0;s0,s1;s2,s3;s3,s3#s1,s2#s3',
+  //   tests: [
+  //     { input: '11', output: true },
+  //     { input: '1011', output: true },
+  //     { input: '1111', output: true },
+  //     { input: '1110', output: true },
+  //     { input: '001', output: false },
+  //     { input: '10', output: false },
+  //     { input: '000', output: false },
+  //   ],
+  // },
 ];
 
 function formalizer(allStates, acceptStates) {
