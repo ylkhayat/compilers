@@ -4,43 +4,23 @@ const chalk = require('chalk');
 
 let tests1 = [
   {
-    dfaString: 's0,s0,s1,00;s1,s2,s1,01;s2,s0,s3,10;s3,s3,s3,11#s0,s1,s2',
-    tests: [{ input: '1011100', output: '1000' }],
-  },
-  {
-    dfaString: 's0,s0,s1,00;s1,s2,s1,01;s2,s0,s3,10;s3,s3,s3,11#',
+    dfaString: 's0,s0,s1,00;s1,s0,s2,01;s2,s3,s2,10;s3,s2,s3,11#s1,s3',
     tests: [
-      { input: '1', output: '01' },
-      { input: '10', output: '10' },
-      { input: '100', output: '00' },
+      { input: '00111', output: '' },
+      { input: '0011100', output: '' },
+      { input: '110101', output: '' },
+      { input: '1101010', output: '' },
+      { input: '000', output: '' },
     ],
   },
   {
-    dfaString: 's0,s0,s1,00;s1,s2,s1,01;s2,s0,s3,10;s3,s3,s3,11#s3',
+    dfaString: 's0,s1,s0,00;s1,s3,s0,01;s2,s1,s3,10;s3,s2,s3,11#s3',
     tests: [
-      { input: '101', output: '11' },
-      { input: '10', output: '10' },
-      { input: '100', output: '00' },
-    ],
-  },
-  {
-    dfaString: 's0,s1,s3,000;s1,s2,s3,001;s2,s2,s4,010;s3,s1,s4,011;s4,s2,s4,100#s2,s4',
-    tests: [
-      { input: '01110110', output: '010' },
-      { input: '0101001', output: '100' },
-      { input: '1010', output: '001' },
-      { input: '101011001', output: '100' },
-      { input: '11110', output: '010' },
-    ],
-  },
-  {
-    dfaString: 's0,s1,s0,11;s1,s1,s2,10;s2,s1,s3,01;s3,s1,s0,00#s2,s3',
-    tests: [
-      { input: '01110', output: '0010' },
-      { input: '1101111', output: '0011' },
-      { input: '11001000', output: '0110' },
-      { input: '0110111', output: '0011' },
-      { input: '10110010', output: '0110' },
+      { input: '10000', output: '' },
+      { input: '00', output: '' },
+      { input: '00001', output: '' },
+      { input: '10101', output: '' },
+      { input: '10', output: '' },
     ],
   },
 ];

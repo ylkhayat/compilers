@@ -1,5 +1,5 @@
-var { DFA } = require('./DFA');
-var { NFA } = require('./NFA');
+var {DFA} = require('./DFA');
+var {NFA} = require('./NFA');
 const _ = require('lodash');
 
 function joinSet(input) {
@@ -12,7 +12,7 @@ function joinSet(input) {
   return newState;
 }
 
-function Transition({ inp, out0, out1, oute, outa }) {
+function Transition({inp, out0, out1, oute, outa}) {
   this.inp = inp;
   this.out0 = out0 ? out0 : new Set();
   this.out1 = out1 ? out1 : new Set();
@@ -25,7 +25,12 @@ function Transition({ inp, out0, out1, oute, outa }) {
     const out1Transition = joinSet(this.out1);
 
     return {
-      [inpTransition]: { '0': out0Transition, '1': out1Transition, e: this.oute, a: this.outa },
+      [inpTransition]: {
+        '0': out0Transition,
+        '1': out1Transition,
+        e: this.oute,
+        a: this.outa,
+      },
     };
   };
   Transition.prototype.valid = function() {
@@ -67,7 +72,7 @@ function Transition({ inp, out0, out1, oute, outa }) {
       this.out1 === transition.getOne()
     );
   };
-  Transition.prototype.add = function({ out0s, out1s, outes }) {
+  Transition.prototype.add = function({out0s, out1s, outes}) {
     if (out0s)
       out0s.forEach(out0 => {
         this.out0.add(out0);
@@ -84,5 +89,10 @@ function Transition({ inp, out0, out1, oute, outa }) {
   };
 }
 
-module.exports = { DFA, NFA, Transition };
+module.exports = {DFA, NFA, Transition};
 require('make-runnable');
+
+/*
+Presuming a vigorous engagement for my long-lost self to that particular place, I wouldn't dare to describe it since jubilant thoughts embark fading to the void once expressed, yet, set free from that safe entity called mind.
+However, eagerness to reveal such feelings to some living individuals remains questionable and nonsense for that long-awaited moment to simply slip a shred of evidence to a certain loving memory or a gloriously notable sight that would effectively reconcile my distant affection to believe that such a place actually exists.
+ */
