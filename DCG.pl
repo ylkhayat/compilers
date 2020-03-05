@@ -1,5 +1,7 @@
 :-include('DCGDict.pl').
 
+s(S) --> sentence(S).
+
 sentence(s(NP, VP)) --> noun_phrase(NP), verb_phrase(VP).
 sentence(s(NP, VP, PP)) --> noun_phrase(NP), verb_phrase(VP), prep_phrase(PP).
 
@@ -11,8 +13,6 @@ noun_phrase(np(P, AP)) --> pron(P), adverb_phrase(AP).
 noun_phrase(np(DP)) --> det_phrase(DP).
 noun_phrase(np(DP1, C, DP2)) --> det_phrase(DP1), conj_phrase(C), det_phrase(DP2).
 noun_phrase(np(DP, PP)) --> det_phrase(DP), prep_phrase(PP).
-% noun_phrase(np(DP, AP)) --> det_phrase(DP), adject_phrase(AP).
-% noun_phrase(np(DP, AP, PP)) --> det_phrase(DP), adject_phrase(AP), prep_phrase(PP).
 % <<< Noun Phrases <<< %
 
 % >>> Prepositional Phrases >>> %
@@ -20,13 +20,11 @@ prep_phrase(PP) --> noun_prep_phrase(PP); verb_prep_phrase(PP).
 noun_prep_phrase(pp(P, NP)) --> start_prep(P), noun_phrase(NP).
 verb_prep_phrase(pp(P, NP)) --> verb_start_prep(P), sentence(NP).
 verb_prep_phrase(pp(P, AP)) --> start_prep(P), adject_phrase(AP).
-% verb_prep_phrase(pp(P, AP)) --> start_prep(P), sentence(AP).
 % <<< Prepositional Phrases <<< %
 
 % >>> Determiner Phrases >>> %
 det_phrase(DP) --> inf_def_det_phrase(DP); poss_det_phrase(DP); demon_det_phrase(DP); quant_det_phrase(DP). 
 inf_def_det_phrase(dp(D, N)) --> article(D), noun(N).
-% inf_def_det_phrase(dp(D, N, AP)) --> article(D), noun(N), adject_phrase(AP).
 inf_def_det_phrase(dp(D, AP, N)) --> article(D), adject_phrase(AP), noun(N).
 inf_def_det_phrase(dp(D, AP1, N, AP2)) --> article(D), adject_phrase(AP1), noun(N), adject_phrase(AP2).
 poss_det_phrase(dp(D, N)) --> poss_det(D), noun(N).
@@ -40,7 +38,6 @@ quant_det_phrase(dp(D, AP, N)) --> quant_det(D), adject_phrase(AP), noun(N).
 
 % >>> Verb Phrases >>> %
 verb_phrase(vp(V)) --> verb(V).
-% verb_phrase(vp(V1, V2)) --> verb(V1), verb_phrase(V2).
 verb_phrase(vp(V1, C, V2)) --> verb(V1), conj_phrase(C), verb_phrase(V2).
 verb_phrase(vp(V1, NP, C, V2)) --> verb(V1), noun_phrase(NP), conj_phrase(C), verb_phrase(V2).
 verb_phrase(vp(V, A)) --> verb(V), adverb_phrase(A).
@@ -76,7 +73,7 @@ conj_phrase(cp(C, NP)) --> conj(C), noun_phrase(NP).
 
 adverb_phrase(abp(A)) --> adv(A).
 
-% Test 1 - sentence(Parse_tree, [the, young, boy, who, worked, for, the, old, man, pushed, and, stored, a, big, box, in, the, large, empty, room, after, school], []).;
-% Test 2 - sentence(Parse_tree, [the, old, woman, and, the, old, man, gave, the, poor, young, man, whom, they, liked, a, white, envelope, in, the, shed, behind, the, building], []).
-% Test 3 - sentence(Parse_tree, [every, boy, quickly, climbed, some, big, tree, while, every, girl, secretly, watched, some, boy], []).
-% Test 4 - sentence(Parse_tree, [some, brilliant, students, and, many, professors, watched, and, admired, talented, lecturers, and, appreciated, bright, scientists, and, researchers], []).
+% Test 1 - sentence(PT, [the, young, boy, who, worked, for, the, old, man, pushed, and, stored, a, big, box, in, the, large, empty, room, after, school], []).
+% Test 2 - sentence(PT, [the, old, woman, and, the, old, man, gave, the, poor, young, man, whom, they, liked, a, white, envelope, in, the, shed, behind, the, building], []).
+% Test 3 - sentence(PT, [every, boy, quickly, climbed, some, big, tree, while, every, girl, secretly, watched, some, boy], []).
+% Test 4 - sentence(PT, [some, brilliant, students, and, many, professors, watched, and, admired, talented, lecturers, and, appreciated, bright, scientists, and, researchers], []).
