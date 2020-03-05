@@ -30,49 +30,51 @@ noun(n(scientist)) --> [scientist].
 noun(n(scientists)) --> [scientists].
 noun(n(researcher)) --> [researcher].
 noun(n(researchers)) --> [researchers].
-noun(n(while)) --> [while].
+noun(n(shed)) --> [shed].
+noun(n(teachers)) --> [teachers].
 
-verb(v(worked)) --> [worked].
-verb(v(pushed)) --> [pushed].
-verb(v(stored)) --> [stored].
-verb(v(gave)) --> [gave].
-verb(v(shed)) --> [shed].
-verb(v(liked)) --> [liked].
-verb(v(climbed)) --> [climbed].
-verb(v(watched)) --> [watched].
-verb(v(admired)) --> [admired].
-verb(v(appreciated)) --> [appreciated].
-verb(v(accepted)) --> [accepted].
-verb(v(added)) --> [added].
-verb(v(admired)) --> [admired].
-verb(v(admited)) --> [admited].
-verb(v(advised)) --> [advised].
-verb(v(afforded)) --> [afforded].
-verb(v(agreed)) --> [agreed].
-verb(v(alerted)) --> [alerted].
-verb(v(allowed)) --> [allowed].
-verb(v(amused)) --> [amused].
-verb(v(analysed)) --> [analysed].
-verb(v(announced)) --> [announced].
-verb(v(annoyed)) --> [annoyed].
-verb(v(answered)) --> [answered].
-verb(v(apologised)) --> [apologised].
-verb(v(appeared)) --> [appeared].
-verb(v(applauded)) --> [applauded].
-verb(v(appreciated)) --> [appreciated].
-verb(v(approved)) --> [approved].
-verb(v(argued)) --> [argued].
-verb(v(arranged)) --> [arranged].
-verb(v(arrested)) --> [arrested].
-verb(v(arrived)) --> [arrived].
-verb(v(asked)) --> [asked].
-verb(v(attached)) --> [attached].
-verb(v(attacked)) --> [attacked].
-verb(v(attempted)) --> [attempted].
-verb(v(attended)) --> [attended].
-verb(v(attracted)) --> [attracted].
-verb(v(avoided)) --> [avoided].
-verb(v(worked)) --> [worked].
+comp_verb(v(gave)) --> [gave].
+sing_verb(v(worked)) --> [worked].
+sing_verb(v(pushed)) --> [pushed].
+sing_verb(v(stored)) --> [stored].
+sing_verb(v(shed)) --> [shed].
+sing_verb(v(liked)) --> [liked].
+sing_verb(v(climbed)) --> [climbed].
+sing_verb(v(watched)) --> [watched].
+sing_verb(v(admired)) --> [admired].
+sing_verb(v(appreciated)) --> [appreciated].
+sing_verb(v(accepted)) --> [accepted].
+sing_verb(v(added)) --> [added].
+sing_verb(v(admired)) --> [admired].
+sing_verb(v(admited)) --> [admited].
+sing_verb(v(advised)) --> [advised].
+sing_verb(v(afforded)) --> [afforded].
+sing_verb(v(agreed)) --> [agreed].
+sing_verb(v(alerted)) --> [alerted].
+sing_verb(v(allowed)) --> [allowed].
+sing_verb(v(amused)) --> [amused].
+sing_verb(v(analysed)) --> [analysed].
+sing_verb(v(announced)) --> [announced].
+sing_verb(v(annoyed)) --> [annoyed].
+sing_verb(v(answered)) --> [answered].
+sing_verb(v(apologised)) --> [apologised].
+sing_verb(v(appeared)) --> [appeared].
+sing_verb(v(applauded)) --> [applauded].
+sing_verb(v(appreciated)) --> [appreciated].
+sing_verb(v(approved)) --> [approved].
+sing_verb(v(argued)) --> [argued].
+sing_verb(v(arranged)) --> [arranged].
+sing_verb(v(arrested)) --> [arrested].
+sing_verb(v(arrived)) --> [arrived].
+sing_verb(v(asked)) --> [asked].
+sing_verb(v(attached)) --> [attached].
+sing_verb(v(attacked)) --> [attacked].
+sing_verb(v(attempted)) --> [attempted].
+sing_verb(v(attended)) --> [attended].
+sing_verb(v(attracted)) --> [attracted].
+sing_verb(v(avoided)) --> [avoided].
+sing_verb(v(worked)) --> [worked].
+verb(V) --> sing_verb(V); comp_verb(V).
 
 
 adjc(aj(young)) --> [young].
@@ -113,16 +115,16 @@ adjc(aj(muscular)) --> [muscular].
 adjc(aj(plain)) --> [plain].
 adjc(aj(plump)) --> [plump].
 
-pron(pr(they)) --> [they].
-pron(pr(he)) --> [he].
-pron(pr(she)) --> [she].
-pron(pr(it)) --> [it].
-pron(pr(who)) --> [who].
-pron(pr(whom)) --> [whom].
-pron(pr(many)) --> [many].
+c_pron(pr(they)) --> [they].
+c_pron(pr(he)) --> [he].
+c_pron(pr(she)) --> [she].
+c_pron(pr(it)) --> [it].
+c_pron(pr(who)) --> [who].
+c_pron(pr(many)) --> [many].
+dep_pron(pr(whom)) --> [whom].
+pron(P) --> dep_pron(P); c_pron(P).
 
 conj(c(and)) --> [and].
-conj(c(for)) --> [for].
 conj(c(nor)) --> [nor].
 conj(c(but)) --> [but].
 conj(c(or)) --> [or].
@@ -187,6 +189,7 @@ start_prep(sp(in)) --> [in].
 start_prep(sp(over)) --> [over].
 start_prep(sp(under)) --> [under].
 start_prep(sp(with)) --> [with].
+verb_start_prep(sp(while)) --> [while].
 
 % ## Careless Preposition ## %
 c_prep(prp(into)) --> [into].
@@ -202,7 +205,7 @@ c_prep(prp(concerning)) --> [concerning].
 c_prep(prp(on)) --> [on].
 c_prep(prp(like)) --> [like].
 
-prep(P) --> start_prep(P); c_prep(P).
+prep(P) --> start_prep(P); c_prep(P); verb_start_prep(P).
 
 
 % # Determiners # %
@@ -235,21 +238,4 @@ quant_det(qd(no)) --> [no].
 quant_det(qd(some)) --> [some].
 
 det(D) --> poss_det(D); demon_det(D); article(D); quant_det(D).
-% det(d(every)) --> [every].
-% det(d(some)) --> [some].
-% det(d(many)) --> [many].
-% det(d(the)) --> [the].
-% det(d(a)) --> [a].
-% det(d(an)) --> [an].
-% det(d(this)) --> [this].
-% det(d(that)) --> [that].
-% det(d(these)) --> [these].
-% det(d(those)) --> [those].
-% det(d(my)) --> [my].
-% det(d(your)) --> [your].
-% det(d(his)) --> [his].
-% det(d(her)) --> [her].
-% det(d(its)) --> [its].
-% det(d(our)) --> [our].
-% det(d(their)) --> [their].
 

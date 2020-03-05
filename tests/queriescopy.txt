@@ -1,0 +1,1 @@
+accept:sentence(PT, [the,young,boy,who,worked,for,the,old,man,pushed,and,stored,a,big,box,in,the,large,empty,room,after,school], []).
