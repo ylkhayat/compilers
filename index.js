@@ -1,5 +1,6 @@
 var {DFA} = require('./DFA');
 var {NFA} = require('./NFA');
+var {CFG} = require('./CFG');
 const _ = require('lodash');
 
 function joinSet(input) {
@@ -89,7 +90,7 @@ function Transition({inp, out0, out1, oute, outa}) {
   };
 }
 
-module.exports = {DFA, NFA, Transition};
+module.exports = {DFA, NFA, CFG, Transition};
 require('make-runnable');
 
 /*

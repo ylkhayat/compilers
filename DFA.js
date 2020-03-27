@@ -1,4 +1,4 @@
-var { Transition } = require('./index.js');
+var {Transition} = require('./index.js');
 
 function DFA(dfaDesc = '#', fallback = false) {
   const [transitionString = '', acceptString = ''] = dfaDesc.split('#');
@@ -11,7 +11,7 @@ function DFA(dfaDesc = '#', fallback = false) {
     const [inp, out0, out1, outa] = transition.split(',');
     this.transitionFunctions = {
       ...this.transitionFunctions,
-      ...new Transition({ inp, out0, out1, outa }).get(),
+      ...new Transition({inp, out0, out1, outa}).get(),
     };
     this.states = [...this.states, inp, out0, out1];
   });
@@ -43,11 +43,11 @@ function DFA(dfaDesc = '#', fallback = false) {
         lastVisited = this.evaluate(lastVisited, symb);
         const accepted = this.acceptStates.includes(lastVisited);
         if (accepted) {
-          lastAccepted = { state: lastVisited, index: i };
+          lastAccepted = {state: lastVisited, index: i};
         }
         if (i === length - 1) {
-          const { state, index } = lastAccepted;
-          lastAccepted = { state: null, index: -1 };
+          const {state, index} = lastAccepted;
+          lastAccepted = {state: null, index: -1};
           if (index === i) {
             actions += this.evaluate(lastVisited, 'a');
             break;
@@ -81,4 +81,4 @@ function DFA(dfaDesc = '#', fallback = false) {
   };
 }
 
-module.exports = { DFA };
+module.exports = {DFA};

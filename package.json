@@ -9,7 +9,8 @@
     "test-fdfa": "mocha tests/FDFA_tests",
     "test-analysis-fdfa": "mocha tests/FDFA_Analysis_tests",
     "test-dfa": "mocha tests/DFA_tests",
-    "test-nfa": "mocha tests/NFA_tests"
+    "test-nfa": "mocha tests/NFA_tests",
+    "test-cfg": "mocha tests/CFG_tests"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.3",

@@ -72,7 +72,7 @@ class bcolors:
     UNDERLINE = '\033[4m'
 
 
-PROLOG_FILE = "DCG.pl"
+PROLOG_FILE = "37-3865.pl"
 
 parser = argparse.ArgumentParser(description='Automate prolog testing')
 parser.add_argument('--accepted',

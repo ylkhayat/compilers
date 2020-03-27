@@ -5,11 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Current File",
-            "type": "python",
+            "type": "node",
             "request": "launch",
-            "program": "${file}",
-            "console": "integratedTerminal"
+            "name": "Launch Program",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/tests/CFG_tests.js"
         }
     ]
 }
