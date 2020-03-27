@@ -1,3 +1,6 @@
+const argv = require('yargs').argv;
+const chalk = require('chalk');
+
 function CFG(cfgDesc = '') {
   const rulesArrayRaw = cfgDesc.split(';');
   this.rules = rulesArrayRaw.reduce((accum, singleRule) => {
@@ -72,12 +75,24 @@ function CFG(cfgDesc = '') {
     });
 
     const keys = Object.keys(this.rules);
-
-    return keys.reduce((accum, key) => {
+    const cfgObject = keys.reduce((accum, key) => {
       const rules = this.rules[key].map(rule => (rule ? rule.join('') : rule));
       return {...accum, [key]: rules};
     }, {});
+    console.log(JSON.stringify(cfgObject, null, '\t'));
   };
+}
+
+if (argv.cfgString) {
+  var cfg = new CFG(argv.cfgString);
+  cfg.LRE();
+} else {
+  console.log(
+    chalk.yellow('Please enter a valid cfgString.'),
+    'ie: `node ./CFG_submit.js',
+    chalk.green('--cfgString'),
+    chalk.blue('"S,o,aS;L,k,LT"`')
+  );
 }
 
 module.exports = {CFG};
